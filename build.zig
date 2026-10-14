@@ -22,7 +22,17 @@ fn buildFn(pkg_builder: *VerboseBuilder) !void {
 pub fn build(builder: *std.Build) !void {
     var pkg_builder = try VerboseBuilder.init(builder, @tagName(build_zig_zon.name), buildFn, updateFn);
 
-    try pkg_builder.fetch(@TypeOf(build_zig_zon.dependencies), build_zig_zon.dependencies, pkg_builder.ptrCwd());
-    try pkg_builder.update();
-    try pkg_builder.build();
+    // Use this to suppress the library from getting built if the target is not a BSD
+    sw: switch (pkg_builder.getOs()) {
+        .freebsd =>
+            continue :sw .netbsd,
+        .netbsd =>
+            continue :sw .openbsd,
+        .openbsd => {
+            try pkg_builder.fetch(@TypeOf(build_zig_zon.dependencies), build_zig_zon.dependencies, pkg_builder.ptrCwd());
+            try pkg_builder.update();
+            try pkg_builder.build();
+        },
+        else => {}
+    }
 }
