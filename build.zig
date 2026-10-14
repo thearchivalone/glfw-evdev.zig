@@ -14,9 +14,16 @@ fn buildFn(pkg_builder: *VerboseBuilder) !void {
     while (try pkg_builder.walk(&.{"evdev"})) |*entry| {
         if (toolbox.isCHeader(entry.basename)) pkg_builder.installHeader(lib, &.{ "evdev", entry.path }, &.{entry.path});
     }
-
     pkg_builder.addInclude(lib, &.{"evdev"});
+
+    if (pkg_builder.getOs() == .netbsd or pkg_builder.getOs() == .openbsd) {
+        while (try pkg_builder.walk(&.{"netbsd"})) |*entry| {
+            if (toolbox.isCHeader(entry.basename)) pkg_builder.installHeader(lib, &.{ "netbsd", entry.path }, &.{entry.path});
+        }
+        pkg_builder.addInclude(lib, &.{"netbsd"});
+    }
     pkg_builder.installArtifact(lib);
+
 }
 
 pub fn build(builder: *std.Build) !void {

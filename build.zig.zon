@@ -8,6 +8,6 @@
             .hash = "toolbox-2.2.6-kRAu4PWZAABStjgaoZOo0LGuvuzRB3FPr6ClsO9b8dDO",
         },
     },
-    .paths = .{ "build.zig", "build.zig.zon", "evdev", "src", "LICENSE" },
+    .paths = .{ "build.zig", "build.zig.zon", "evdev", "netbsd", "src", "LICENSE" },
     .fingerprint = 0x66717d454c41a7c2,
 }
