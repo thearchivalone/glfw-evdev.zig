@@ -1,14 +1,13 @@
 .{
     .minimum_zig_version = "0.17.0",
-    .name = .evdev,
+    .name = .evdev_zig,
     .version = "7.2.0",
-    .dependencies = .{},
-    .paths = .{
-        "build.zig",
-        "build.zig.zon",
-        "include",
-        "src",
-        "LICENSE"
+    .dependencies = .{
+        .toolbox = .{
+            .url = "git+https://github.com/tiawl/toolbox.git#1d8adf876330d02b8988b020b26a92ade6f834d1",
+            .hash = "toolbox-2.2.6-kRAu4PWZAABStjgaoZOo0LGuvuzRB3FPr6ClsO9b8dDO",
+        },
     },
-    .fingerprint = 0x3796d877c7dd5025,
+    .paths = .{ "build.zig", "build.zig.zon", "evdev", "src", "LICENSE" },
+    .fingerprint = 0x66717d454c41a7c2,
 }

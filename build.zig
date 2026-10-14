@@ -1,21 +1,28 @@
 const std = @import("std");
+const build_zig_zon = @import("build.zig.zon");
+const toolbox = @import("toolbox");
+const VerboseBuilder = toolbox.VerboseBuilder;
 
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
+fn updateFn(pkg_builder: *VerboseBuilder) !void {
+    try pkg_builder.remove(&.{"evdev"});
+    try pkg_builder.make(&.{"evdev"});
+}
 
-    const evdev_lib = b.addLibrary(.{
-        .name = "evdev",
-        .root_module = b.createModule(.{
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-        }),
-        .linkage = .static,
-    });
-    evdev_lib.root_module.addIncludePath(b.path("include"));
-    evdev_lib.root_module.addCSourceFile(.{ .file = b.path("src/evdev.c") });
-    evdev_lib.installHeader(b.path("include/linux/input.h"), "linux/input.h");
-    evdev_lib.installHeader(b.path("include/linux/input-event-codes.h"), "linux/input-event-codes.h");
-    b.installArtifact(evdev_lib);
+fn buildFn(pkg_builder: *VerboseBuilder) !void {
+    const lib = pkg_builder.addLibrary("evdev");
+
+    while (try pkg_builder.walk(&.{"evdev"})) |*entry| {
+        if (toolbox.isCHeader(entry.basename)) pkg_builder.installHeader(lib, &.{ "evdev", entry.path }, &.{entry.path});
+    }
+
+    pkg_builder.addInclude(lib, &.{"evdev"});
+    pkg_builder.installArtifact(lib);
+}
+
+pub fn build(builder: *std.Build) !void {
+    var pkg_builder = try VerboseBuilder.init(builder, @tagName(build_zig_zon.name), buildFn, updateFn);
+
+    try pkg_builder.fetch(@TypeOf(build_zig_zon.dependencies), build_zig_zon.dependencies, pkg_builder.ptrCwd());
+    try pkg_builder.update();
+    try pkg_builder.build();
 }
