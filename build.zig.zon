@@ -1,0 +1,14 @@
+.{
+    .minimum_zig_version = "0.17.0",
+    .name = .evdev,
+    .version = "7.2.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "include",
+        "src",
+        "LICENSE"
+    },
+    .fingerprint = 0x3796d877c7dd5025,
+}
